@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Energy Control Panel</title>
+    <link rel="stylesheet" href="control-panel.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="page__header">
+        <h1>Energy Dashboard | Control Panel</h1>
+      </header>
+
+      <main class="container">
+        <section class="card">
+          <form class="form-grid">
+            <label class="field">
+              <span class="field__label">Energy Source</span>
+              <select name="energy-source" required>
+                <option value="" disabled>Select an energy source</option>
+                <option value="coal" selected>Coal</option>
+                <option value="geothermal">Geothermal</option>
+                <option value="hydroelectric-conventional">Hydroelectric Conventional</option>
+                <option value="natural-gas">Natural Gas</option>
+                <option value="nuclear">Nuclear</option>
+                <option value="other">Other</option>
+                <option value="other-biomass">Other Biomass</option>
+                <option value="other-gases">Other Gases</option>
+                <option value="petroleum">Petroleum</option>
+                <option value="pumped-storage">Pumped Storage</option>
+                <option value="solar-thermal-photovoltaic">Solar Thermal and Photovoltaic</option>
+                <option value="total">Total</option>
+                <option value="wind">Wind</option>
+                <option value="wood-derived">Wood and Wood Derived Fuels</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span class="field__label">Unit of Energy</span>
+              <select name="energy-unit" required>
+                <option value="" disabled>Select a unit</option>
+                <option value="megawatt-hours" selected>Megawatt-hours</option>
+                <option value="gigajoules">Gigajoules</option>
+                <option value="btu">BTU</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span class="field__label">Year</span>
+              <select name="year" required>
+                <option value="" disabled selected>Select a year</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+                <option value="2020">2020</option>
+                <option value="2019">2019</option>
+                <option value="2018">2018</option>
+                <option value="2017">2017</option>
+                <option value="2016">2016</option>
+                <option value="2015">2015</option>
+                <option value="2014">2014</option>
+                <option value="2013">2013</option>
+                <option value="2012">2012</option>
+                <option value="2011">2011</option>
+                <option value="2010">2010</option>
+                <option value="2009">2009</option>
+                <option value="2008">2008</option>
+                <option value="2007">2007</option>
+                <option value="2006">2006</option>
+                <option value="2005">2005</option>
+                <option value="2004">2004</option>
+                <option value="2003">2003</option>
+                <option value="2002">2002</option>
+                <option value="2001">2001</option>
+              </select>
+            </label>
+          </form>
+        </section>
+
+        <section class="card card--chart">
+          <svg class="chart" viewBox="0 0 1200 500" role="img" aria-label="Empty chart area"></svg>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
