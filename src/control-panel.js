@@ -74,7 +74,12 @@ function renderWholeGraph(data, renderBarsCallback) {
     .call(xAxis);
 
   // Initialize y axis
-  const yDomain = [0, d3.max(data.map((d) => d.sum))];
+  // const yDomain = [0, d3.max(data.map((d) => d.sum))];
+  const yDomain = [
+    Math.min(0, d3.min(data.map((d) => d.sum))),
+    Math.max(0, d3.max(data.map((d) => d.sum))),
+  ];
+  console.log(yDomain);
   const yRange = [config.height - config.marginBottom, config.marginTop];
   const yScale = d3.scaleLinear().domain(yDomain).range(yRange);
   const yAxis = d3.axisLeft(yScale);
@@ -139,7 +144,8 @@ function renderBarsInitial(data, xScale, yScale) {
     .transition()
     .duration(1000)
     .attr('y', (d) => yScale(d.sum))
-    .attr('height', (d) => yScale(0) - yScale(d.sum));
+    .attr('height', (d) => Math.abs(yScale(d.sum) - yScale(0)));
+  // .attr('height', (d) => yScale(0) - yScale(d.sum));
 }
 
 // Rendering bars on source change
@@ -157,8 +163,10 @@ function renderBarsOnSourceChange(data, xScale, yScale) {
   bars
     .transition()
     .duration(1000)
-    .attr('y', (d) => yScale(d.sum))
-    .attr('height', (d) => yScale(0) - yScale(d.sum));
+    .attr('y', (d) => yScale(d.sum >= 0 ? d.sum : 0))
+    .attr('height', (d) => {
+      return Math.abs(yScale(0) - yScale(d.sum));
+    });
 }
 
 // Get generation amount from a chosen source at chosen year in 12 months
