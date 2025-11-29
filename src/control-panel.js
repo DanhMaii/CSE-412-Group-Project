@@ -185,7 +185,7 @@ function renderBarsInitial(data, xScale, yScale) {
   bars
     .transition()
     .duration(1000)
-    .attr('y', (d) => yScale(d.sum))
+    .attr('y', (d) => yScale(d.sum >= 0 ? d.sum : 0))
     .attr('height', (d) => Math.abs(yScale(d.sum) - yScale(0)));
   // .attr('height', (d) => yScale(0) - yScale(d.sum));
 }
