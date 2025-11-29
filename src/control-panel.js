@@ -11,18 +11,46 @@ const config = {
   fontSize: 16,
   padding: 0.5,
 };
-async function main() {
-  // Getting data from supabase
-  const data = await getDataByYearSource('Coal', 2001);
 
-  // Get svg element
-  const svg = d3.select('#main-svg');
+let year = 2001;
+let source = 'Coal';
+const svg = d3.select('#main-svg');
+async function main() {
+  // Setting up controller
+  controllerSetup();
+
+  // Getting data from supabase
+  const data = await getDataByYearSource(source, year);
 
   // Render it out with given data
-  renderGraph(svg, data);
+  renderWholeGraph(data, renderBarsInitial);
 }
 
-function renderGraph(svg, data) {
+// Setting up handlers
+function controllerSetup() {
+  // Add handler when DOM Content is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    document
+      .getElementById('energy-source')
+      .addEventListener('change', (e) =>
+        energySourceChangeHandler(e.target.value)
+      );
+
+    // Function to handle the energy source change
+    async function energySourceChangeHandler(newSource) {
+      // Update global variable: source
+      source = newSource;
+
+      // Get new data
+      const data = await getDataByYearSource(newSource, year);
+
+      renderWholeGraph(data, renderBarsOnSourceChange);
+    }
+  });
+}
+
+// Main graph rendering
+function renderWholeGraph(data, renderBarsCallback) {
   // Initialize x axis
   const xDomain = data.map((d) => d.g_month);
   const xRange = [config.marginLeft, config.width - config.marginRight];
@@ -33,6 +61,11 @@ function renderGraph(svg, data) {
     .padding(config.padding);
   const xAxis = d3.axisBottom(xScale);
 
+  // Try to remove old x-axis before adding
+  const oldXAxis = svg.select('#x-axis');
+  if (!oldXAxis.empty()) {
+    oldXAxis.remove();
+  }
   // Adding x axis
   svg
     .append('g')
@@ -46,24 +79,18 @@ function renderGraph(svg, data) {
   const yScale = d3.scaleLinear().domain(yDomain).range(yRange);
   const yAxis = d3.axisLeft(yScale);
 
+  // Try to remove old y-axis before adding
+  const oldYAxis = svg.select('#y-axis');
+  if (!oldYAxis.empty()) {
+    oldYAxis.remove();
+  }
+
   // Adding y axis
   svg
     .append('g')
     .attr('id', 'y-axis')
     .attr('transform', `translate(${config.marginLeft},0)`)
     .call(yAxis);
-
-  // Adding bars
-  svg
-    .append('g')
-    .attr('fill', '#3EA3F0')
-    .selectAll('rect')
-    .data(data)
-    .join('rect')
-    .attr('x', (d) => xScale(d.g_month))
-    .attr('y', (d) => yScale(d.sum))
-    .attr('width', xScale.bandwidth())
-    .attr('height', (d) => yScale(0) - yScale(d.sum));
 
   // Adding x label if there is no x label
   if (svg.select('#x-label').empty()) {
@@ -90,6 +117,48 @@ function renderGraph(svg, data) {
       .style('font-size', config.fontSize)
       .text('Amount');
   }
+
+  renderBarsCallback(data, xScale, yScale);
+}
+
+// First time rendering bars
+function renderBarsInitial(data, xScale, yScale) {
+  // Adding bars
+  const bars = svg
+    .selectAll('rect')
+    .data(data)
+    .join('rect')
+    .attr('fill', '#3EA3F0')
+    .attr('x', (d) => xScale(d.g_month))
+    .attr('y', yScale(0))
+    .attr('width', xScale.bandwidth())
+    .attr('height', 0);
+
+  // Adding transition to the bars
+  bars
+    .transition()
+    .duration(1000)
+    .attr('y', (d) => yScale(d.sum))
+    .attr('height', (d) => yScale(0) - yScale(d.sum));
+}
+
+// Rendering bars on source change
+function renderBarsOnSourceChange(data, xScale, yScale) {
+  // Adding bars
+  const bars = svg
+    .selectAll('rect')
+    .data(data)
+    .join('rect')
+    .attr('fill', '#3EA3F0')
+    .attr('x', (d) => xScale(d.g_month))
+    .attr('width', xScale.bandwidth());
+
+  // Adding transition to the bars
+  bars
+    .transition()
+    .duration(1000)
+    .attr('y', (d) => yScale(d.sum))
+    .attr('height', (d) => yScale(0) - yScale(d.sum));
 }
 
 // Get generation amount from a chosen source at chosen year in 12 months
