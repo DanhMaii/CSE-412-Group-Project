@@ -44,7 +44,35 @@ function controllerSetup() {
       // Get new data
       const data = await getDataByYearSource(newSource, year);
 
-      renderWholeGraph(data, renderBarsOnSourceChange);
+      renderWholeGraph(data, renderBarsOnChange);
+    }
+    document
+      .getElementById('year-selector')
+      .addEventListener('change', (e) => yearChangeHandler(e.target.value));
+
+    // Function to handle the energy source change
+    async function energySourceChangeHandler(newSource) {
+      // Update global variable: source
+      source = newSource;
+
+      // Get new data
+      const data = await getDataByYearSource(newSource, year);
+
+      renderWholeGraph(data, renderBarsOnChange);
+    }
+
+    async function yearChangeHandler(newYear) {
+      const prevYear = year;
+      // Update global variable: year
+      year = +newYear;
+
+      // Get new data
+      const data = await getDataByYearSource(source, +newYear);
+      if (prevYear === 2022) {
+        renderWholeGraph(data, renderBarsInitial);
+        return;
+      }
+      renderWholeGraph(data, renderBarsOnChange);
     }
   });
 }
@@ -123,6 +151,20 @@ function renderWholeGraph(data, renderBarsCallback) {
       .text('Amount');
   }
 
+  // Adding title if there is no title
+  if (svg.select('#title-label').empty()) {
+    svg
+      .append('text')
+      .attr('id', 'title-label')
+      .attr('text-anchor', 'middle')
+
+      .attr('x', config.width / 2)
+      .attr('y', config.marginTop / 2 - config.fontSize)
+      .style('font-weight', 'bold')
+      .style('font-size', config.fontSize * 1.1)
+      .text(`Energy Generation from ${source} in the U.S. - ${year}`);
+  }
+
   renderBarsCallback(data, xScale, yScale);
 }
 
@@ -143,13 +185,13 @@ function renderBarsInitial(data, xScale, yScale) {
   bars
     .transition()
     .duration(1000)
-    .attr('y', (d) => yScale(d.sum))
+    .attr('y', (d) => yScale(d.sum >= 0 ? d.sum : 0))
     .attr('height', (d) => Math.abs(yScale(d.sum) - yScale(0)));
   // .attr('height', (d) => yScale(0) - yScale(d.sum));
 }
 
 // Rendering bars on source change
-function renderBarsOnSourceChange(data, xScale, yScale) {
+function renderBarsOnChange(data, xScale, yScale) {
   // Adding bars
   const bars = svg
     .selectAll('rect')
