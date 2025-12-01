@@ -26,8 +26,7 @@ document.getElementById('submitBtn').addEventListener('click', async (e) => {
   if (!match) {
     alert('Invalid email or password.');
   } else {
-    alert('Login Successful!');
-    localStorage.setItem('user_uid', user.u_user_id);
+    localStorage.setItem('user_id', user.u_user_id);
     window.location.href = 'control-panel.html';
   }
 });
