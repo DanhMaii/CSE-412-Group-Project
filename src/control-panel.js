@@ -12,7 +12,7 @@ const config = {
   fontSize: 16,
   padding: 0.5,
 };
-let userId = localStorage.getItem('user_uid');
+let userId = localStorage.getItem('user_id');
 let personalQueryExist = null;
 console.log('User ID from login:', userId);
 
