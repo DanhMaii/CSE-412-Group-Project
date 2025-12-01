@@ -129,6 +129,15 @@ function controllerSetup() {
           window.location.href = 'login.html';
         }
       });
+
+    // logout handler
+    document
+      .getElementById('logout-btn')
+      .addEventListener('click', (e) => logoutHandler());
+    function logoutHandler() {
+      localStorage.removeItem('user_id');
+      window.location.href = '/';
+    }
   });
 }
 
