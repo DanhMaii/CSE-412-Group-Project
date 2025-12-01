@@ -1,6 +1,9 @@
 import { supabase } from './database/supabaseClient';
 import bycrypt from 'bcryptjs';
 
+if (localStorage.getItem('user_id')) {
+  window.location.href = 'control-panel.html';
+}
 document.getElementById('Signup').addEventListener('submit', async (e) => {
   e.preventDefault();
 
