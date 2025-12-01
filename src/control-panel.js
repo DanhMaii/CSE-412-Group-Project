@@ -1,6 +1,5 @@
 import { supabase } from './database/supabaseClient';
 import * as d3 from 'd3';
-console.log('User ID from login:', localStorage.getItem('user_uid'));
 // Global graph config
 const config = {
   width: 1200,
@@ -12,6 +11,9 @@ const config = {
   fontSize: 16,
   padding: 0.5,
 };
+let userId = localStorage.getItem('user_uid');
+let personalQueryExist = null;
+console.log('User ID from login:', userId);
 
 let year = 2001;
 let source = 'Coal';
@@ -19,7 +21,16 @@ const svg = d3.select('#main-svg');
 async function main() {
   // Setting up controller
   controllerSetup();
-
+  try {
+    const { sq_filter_criteria } = await getSavedQuery(userId);
+    personalQueryExist = true;
+    year = sq_filter_criteria?.year;
+    source = sq_filter_criteria?.source;
+    document.getElementById('year-selector').value = year;
+    document.getElementById('energy-source').value = source;
+  } catch (e) {
+    console.log(e);
+  }
   // Getting data from supabase
   const data = await getDataByYearSource(source, year);
 
@@ -53,6 +64,7 @@ function controllerSetup() {
 
     // Function to handle the energy source change
     async function energySourceChangeHandler(newSource) {
+      console.log('Changed');
       // Update global variable: source
       source = newSource;
 
@@ -74,6 +86,19 @@ function controllerSetup() {
         return;
       }
       renderWholeGraph(data, renderBarsOnChange);
+    }
+
+    document
+      .getElementById('save-query')
+      .addEventListener('click', (e) => saveCurrentStateHandler());
+    async function saveCurrentStateHandler() {
+      console.log('clicked on save');
+      if (!personalQueryExist) {
+        addQuery(userId, { year, source });
+        personalQueryExist = true;
+      } else {
+        updateSavedQuery(userId, { year, source });
+      }
     }
   });
 }
@@ -221,10 +246,52 @@ async function getDataByYearSource(source, year) {
     .eq('g_year', year)
     .neq('g_energy_source', 'Total');
   if (error) {
-    throw Error("Can't get data from getUser()");
+    throw Error("Can't get data from getDataByYearSource()");
   } else {
     return data;
   }
 }
+// Get saved query
+async function getSavedQuery(userId) {
+  const { data, error } = await supabase
+    .from('Saved_Query')
+    .select('sq_filter_criteria')
+    .eq('sq_user_id', userId)
+    .single();
 
+  if (error) {
+    throw Error("Can't get data from getSavedQuery()");
+  } else {
+    return data;
+  }
+}
+// Insert saved query
+async function addQuery(userId, savedQueryJson) {
+  const { data, error } = await supabase.from('Saved_Query').insert({
+    sq_user_id: userId,
+    sq_name: userId + new Date(),
+    sq_filter_criteria: savedQueryJson,
+  });
+
+  if (error) {
+    throw Error("Can't get data from addQuery()");
+  } else {
+    return data;
+  }
+}
+// Update saved query
+async function updateSavedQuery(userId, newSavedQueryJson) {
+  const { data, error } = await supabase
+    .from('Saved_Query')
+    .update({
+      sq_filter_criteria: newSavedQueryJson,
+    })
+    .eq('sq_user_id', userId);
+
+  if (error) {
+    throw Error("Can't get data from updateSavedQuery()");
+  } else {
+    return data;
+  }
+}
 main();
