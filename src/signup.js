@@ -14,9 +14,9 @@ document.getElementById('Signup').addEventListener('submit', async (e) => {
     .insert({ u_email: email, u_name: username, u_enc_password: hashed });
 
   if (error) {
-    alert('Error Signing Up: ' + error.message);
+    alert('Error Creating Account: ' + error.message);
   } else {
-    alert('Sign Up Successful! Please Log In.');
+    alert('Account Created Successfully.');
     window.location.href = 'login.html';
   }
 });

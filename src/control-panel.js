@@ -1,6 +1,7 @@
 import { supabase } from './database/supabaseClient';
 import * as d3 from 'd3';
 console.log('User ID from login:', localStorage.getItem('user_uid'));
+const user_id = localStorage.getItem('user_id');
 // Global graph config
 const config = {
   width: 1200,
@@ -226,5 +227,32 @@ async function getDataByYearSource(source, year) {
     return data;
   }
 }
+
+//delete account button handler
+document
+  .getElementById('deleteAcctBtn')
+  .addEventListener('click', async (e) => {
+    e.preventDefault();
+
+    const confirmDelete = confirm(
+      'Are you sure you want to delete your account?'
+    );
+    if (!confirmDelete) {
+      return;
+    }
+
+    const { error } = await supabase
+      .from('User')
+      .delete()
+      .eq('u_user_id', user_id);
+
+    if (error) {
+      alert('Error deleting account: ' + error.message);
+    } else {
+      alert('Your account has been deleted.');
+      localStorage.removeItem('user_id');
+      window.location.href = 'login.html';
+    }
+  });
 
 main();
