@@ -89,6 +89,7 @@ function controllerSetup() {
       renderWholeGraph(data, renderBarsOnChange);
     }
 
+    // handle save current state button
     document
       .getElementById('save-query')
       .addEventListener('click', (e) => saveCurrentStateHandler());
@@ -100,6 +101,7 @@ function controllerSetup() {
       } else {
         updateSavedQuery(userId, { year, source });
       }
+      alert('Saved Current State');
     }
     //delete account button handler
     document
