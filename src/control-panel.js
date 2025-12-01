@@ -1,5 +1,6 @@
 import { supabase } from './database/supabaseClient';
 import * as d3 from 'd3';
+console.log('User ID from login:', localStorage.getItem('user_uid'));
 // Global graph config
 const config = {
   width: 1200,
