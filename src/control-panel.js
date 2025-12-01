@@ -119,7 +119,7 @@ function controllerSetup() {
         const { error } = await supabase
           .from('User')
           .delete()
-          .eq('u_user_id', user_id);
+          .eq('u_user_id', userId);
 
         if (error) {
           alert('Error deleting account: ' + error.message);
