@@ -20,7 +20,7 @@ Make sure you have the following installed:
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/DanhMaii/CSE-412-Group-Project.git
 cd cse-412-group-project
 ```
 
