@@ -32,7 +32,13 @@ npm install
 
 This automatically runs the `prepare` script (`husky install`) which sets up Git hooks for pre-commit formatting.
 
-### 3. Start the development server
+### 3. Add the .env file
+After downloading the `.env` file:
+- **Important:** Make sure the file is named exactly `.env` (not `env` or any other variation)
+- If the downloaded file is named `env`, rename it to `.env`
+- Place the `.env` file in the **root folder** of the project (next to `index.html`)
+
+### 4. Start the development server
 
 ```bash
 npm run dev
